@@ -70,8 +70,11 @@ async function buildVersionDocRoutes({
   actions,
   options,
 }: BuildVersionRoutesParam): Promise<RouteConfig[]> {
-  return Promise.all(
-    version.docs.map(async (doc) => {
+  const results = [];
+  // eslint-disable-next-line no-plusplus
+  for (let i = 0; i < version.docs.length; i++) {
+    const doc = version.docs[i];
+    if (doc) {
       await actions.createData(
         // Note that this created data path must be in sync with
         // metadataPath provided to mdx-loader.
@@ -95,9 +98,11 @@ async function buildVersionDocRoutes({
         }),
       };
 
-      return docRoute;
-    }),
-  );
+      results.push(docRoute);
+    }
+  }
+
+  return results;
 }
 
 async function buildVersionSidebarRoute(param: BuildVersionRoutesParam) {
